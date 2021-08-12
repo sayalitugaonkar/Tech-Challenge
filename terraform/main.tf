@@ -1,8 +1,7 @@
+
 provider "aws" {
     region = "${var.AWS_REGION}"
 }
-
-
 
 
 
@@ -121,37 +120,48 @@ resource "aws_security_group" "allow_ssh" {
 
 
 
-# resource "aws_instance" "Bastion" {
-#   instance_type = "t2.micro"
-#   ami = "${var.ami_bastion}" 
-#   key_name = "Sayali_mac"
-#   vpc_security_group_ids = [aws_security_group.allow_ssh.id,"${data.aws_security_group.default.id}"]
-#   subnet_id     = aws_subnet.prod-subnet-public-1.id  
-#   tags = {
-#     "Name" = "Bastion_server"
-#   }
-# }
-
+resource "aws_instance" "Bastion" {
+  instance_type = "t2.micro"
+  ami = "${var.ami_bastion}" 
+  key_name = "Sayali_mac"
+  vpc_security_group_ids = [aws_security_group.allow_ssh.id,"${data.aws_security_group.default.id}"]
+  subnet_id     = aws_subnet.prod-subnet-public-1.id  
+  tags = {
+    "Name" = "Bastion_server"
+  }
+}
 
 resource "aws_instance" "ec2instance" {
-  instance_type = "t2.micro"
+  instance_type = "t3a.medium"
   ami = "${var.ami}" 
   subnet_id = aws_subnet.prod-subnet-private-1.id
   disable_api_termination = false
+
   ebs_optimized = false
-  key_name = "Sayali_mac"
+  key_name = "Bastion"
   vpc_security_group_ids = [aws_security_group.allow_ssh.id,"${data.aws_security_group.default.id}"]
-  depends_on        = ["aws_nat_gateway.example"]
+  depends_on        = [aws_nat_gateway.example]
   root_block_device {
     volume_size = "10"
   }
   tags = {
-    "Name" = "Debian Buster"
+    "Name" = "Magento_Server01"
   }
 }
 output "instance_private_ip" {
   value = aws_instance.ec2instance.private_ip
 }
 
+resource "aws_volume_attachment" "ebs_att" {
+  device_name = "/dev/xvda"
+  volume_id   = aws_ebs_volume.example_ebs.id
+  instance_id = aws_instance.ec2instance.id
+}
 
+
+resource "aws_ebs_volume" "example_ebs" {
+  availability_zone = "${var.AWS_AZ}" 
+  size = 1 
+  type = "gp3"
+}
 

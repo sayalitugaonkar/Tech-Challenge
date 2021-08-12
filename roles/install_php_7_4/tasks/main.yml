@@ -1,8 +1,10 @@
 ---
 
- - name: Install a list of packages for PHP
-   apt: name={{item}} state=installed
-   with_items:
+- name: Install a list of packages for PHP
+  apt: 
+    name: "{{item}}"
+    state: installed
+  with_items:
      - apt-transport-https
      - ca-certificates
      - software-properties-common

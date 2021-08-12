@@ -1,7 +1,15 @@
 - hosts: web-servers
   become: true
   roles:
-    #Install mysql8_on_Debian_Buster
-  - role: mysql
-    tags: mysql8_on_Debian_Buster
+    #Install php7.4
+  - role: install_php_7_4
+    tags: php_7_4
  
+  - role: mysql
+    tags: mysql8_on_Debian_Buster   
+
+  - role: nginx
+    tags: nginx 
+
+  - role: elasticsearch
+    tags: elasticsearch 
