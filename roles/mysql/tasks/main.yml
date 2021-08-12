@@ -1,0 +1,50 @@
+---
+
+
+- name: Download file from a file path
+  get_url:
+    url: "{{ my_package_url }}"
+    dest: /usr/local/bin
+    remote_src: yes
+
+- name: Install GNUPG
+  become: true
+  apt:
+    name: gnupg
+    state: present
+
+- name: mysql-apt-config
+  apt: 
+   deb: "/usr/local/bin/mysql-apt-config_0.8.13-1_all.deb"
+
+- name: Install server
+  become: true
+  apt:
+    name: mysql-server
+    state: present
+
+- name: Install mysql client
+  become: true
+  apt:
+    name: mysql-client
+    state: present
+
+- name: Make sure pymysql is present
+  become: true # needed if the other tasks are not played as root
+  pip:
+    name: pymysql
+    state: present
+
+
+- name: start mysql
+  systemd:
+    name: mysql.service
+    state: started
+
+
+- name: copy my.cnf
+  tags: server:settings
+  template:
+     src: my.cnf.j2
+     dest: '/etc/mysql/my.cnf'
+  notify: restart mysql

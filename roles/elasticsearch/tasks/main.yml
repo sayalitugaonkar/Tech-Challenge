@@ -1,0 +1,22 @@
+---
+- name: import the elasticsearch apt key
+  apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present
+  become: true
+
+- name: install elasticsearch 7.x deb repository
+  apt_repository:
+    repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
+    state: present
+  become: true
+
+- name: install elasticsearch 7.x
+  apt:
+    name: elasticsearch
+    state: present
+    update_cache: true
+  loop:
+    - openjdk-8-jre-headless
+    - elasticsearch
+  become: true
