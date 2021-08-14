@@ -1,0 +1,85 @@
+---
+
+# - name: Composer install
+#   composer: 
+#     command: install 
+#     working_dir: /var/www/html/
+#   environment:
+#       COMPOSER_NO_INTERACTION: "1"
+
+- name: Activate setup install
+  ansible.builtin.shell: php bin/magento setup:install --enable-debug-logging=false --base-url=http://sulakhehospital.co.in/ --session-save=redis --session-save-redis-host=127.0.0.1 --session-save-redis-db=2 --cache-backend=redis --cache-backend-redis-db=0  --page-cache=redis --page-cache-redis-server=127.0.0.1 --page-cache-redis-db=1 --base-url-secure="https://sulakhehospital.co.in/" --use-secure=1 --use-secure-admin=1 --db-host=localhost --db-name=magento --db-user=magento-user --db-password=6x5UE8dp5337Yc --admin-firstname=Magento --admin-lastname=User --admin-email=user@example.com --admin-user=admin --admin-password=6x5UE8dp5337Yc --language=en_US --currency=USD --timezone=America/Chicago --use-rewrites=1 --search-engine=elasticsearch7 --elasticsearch-host=localhost --elasticsearch-port=9200
+  args:
+    chdir: /var/www/html/
+    executable: /bin/bash
+
+- name: Git checkout sample data
+  ansible.builtin.git:
+    repo: 'https://github.com/magento/magento2-sample-data.git'
+    dest: /var/www/sample-data
+    force: yes
+
+- name: link sample data
+  ansible.builtin.shell: php -f build-sample-data.php -- --ce-source="/var/www/html/"
+  args:
+    chdir: /var/www/sample-data/dev/tools/
+    executable: /bin/bash
+
+- name: setup upgrade
+  ansible.builtin.shell: php /var/www/html/bin/magento setup:upgrade
+  args:
+    chdir: /var/www/html/
+    executable: /bin/bash
+
+- name: code compile
+  ansible.builtin.shell: php /var/www/html/bin/magento setup:di:compile
+  args:
+    chdir: /var/www/html/
+    executable: /bin/bash
+
+
+# - name: sample data
+#   ansible.builtin.shell: php /var/www/html/bin/magento sampledata:deploy
+#   args:
+#     chdir: /var/www/html/
+#     executable: /bin/bash
+
+- name: static content
+  ansible.builtin.shell: php /var/www/html/bin/magento setup:static-content:deploy -f -language en_US
+  args:
+    chdir: /var/www/html/
+    executable: /bin/bash
+
+- name: maintenance_disable
+  ansible.builtin.shell: bin/magento maintenance:disable
+  args:
+    chdir: /var/www/html/
+    executable: /bin/bash
+
+- name: maintenance_disable
+  ansible.builtin.shell: bin/magento cache:flush
+  args:
+    chdir: /var/www/html/
+    executable: /bin/bash
+
+- name: Recursively change ownership for magento
+  ansible.builtin.file:
+    path: /var/www/html
+    state: directory
+    recurse: yes
+    owner: test-ssh
+    group: clp
+
+- name: Recursively change ownership for sample-data
+  ansible.builtin.file:
+    path: /var/www/sample-data
+    state: directory
+    recurse: yes
+    owner: test-ssh
+    group: clp
+
+- name: Reindex
+  ansible.builtin.shell: bin/magento indexer:reindex
+  args:
+    chdir: /var/www/html/
+    executable: /bin/bash

@@ -1,14 +1,17 @@
 ---
 
+- name: Run the equivalent of "apt-get update" as a separate step
+  apt:
+    update_cache: yes
+
 - name: Install a list of packages for PHP
   apt: 
     name: "{{item}}"
-    state: installed
+    state: present
   with_items:
      - apt-transport-https
      - ca-certificates
      - software-properties-common
-
 
 - name: import the PHP apt key
   apt_key:
@@ -18,7 +21,7 @@
 
 - name: install PHP deb repository
   apt_repository:
-    repo: deb https://packages.sury.org/php/ $(lsb_release -sc) main
+    repo: "deb https://packages.sury.org/php/ {{ ansible_distribution_release }} main"
     state: present
   become: true
 
@@ -31,3 +34,50 @@
     - openjdk-8-jre-headless
     - php7.4
   become: true
+
+- name: Install a list of packages for PHP  #magento-2-php-extensions
+  apt: 
+    name: "{{item}}"
+    state: present
+  with_items:
+     - php7.4-gd
+     - php7.4-mcrypt
+     - php7.4-curl
+     - php7.4-intl
+     - php7.4-xsl
+     - php7.4-mbstring
+     - php7.4-zip
+     - php7.4-soap
+     - php7.4-bcmath
+     - php7.4-ctype
+     - php7.4-dom
+     - php7.4-iconv
+     - php7.4-simplexml
+     - php7.4-sockets
+     - php7.4-cli
+     - php7.4-fpm
+     - php7.4-xml
+     - php7.4-redis
+     - php7.4-enchant
+     - php7.4-mysql
+     - php7.4-cgi
+     - php7.4-common
+     - php7.4-json
+     - php7.4-opcache
+     - php7.4-readline
+     - php7.4-memcached
+
+
+    
+- name: php cli
+  ansible.builtin.shell: sudo apt update && sudo apt install wget php7.4-cli php7.4-zip unzip curl
+
+- name: Composer download
+  ansible.builtin.shell: curl -sS https://getcomposer.org/installer |php
+
+- name: Composer install
+  ansible.builtin.shell: sudo mv composer.phar /usr/local/bin/composer
+
+- name: Composer permissions
+  file: dest=/usr/local/bin/composer mode=a+x
+

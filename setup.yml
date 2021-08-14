@@ -1,15 +1,24 @@
 - hosts: web-servers
   become: true
   roles:
-    #Install php7.4
-  - role: install_php_7_4
-    tags: php_7_4
- 
-  - role: mysql
-    tags: mysql8_on_Debian_Buster   
-
-  - role: nginx
-    tags: nginx 
-
-  - role: elasticsearch
-    tags: elasticsearch 
+  - role: magento2
+    tags: magento2 
+  # - role: users
+  #   tags: create user "test-ssh" #Tag to 
+  #   #Install php7.4
+  # - role: install_php_7_4
+  #   tags: php_7_4 #Tag to 
+  # - role: php_fpm
+  #   tags: install-php-fpm
+  # # - role: mysql
+  # #   tags: mysql8_on_Debian_Buster   
+  # - role: nginx
+  #   tags: nginx
+  # - role: elasticsearch
+  #   tags: elasticsearch 
+  # - role: redis
+  #   tags: redis 
+  # - role: phpmyadmin
+  #   tags: phpmyadmin 
+  # - role: varnish
+  #   tags: varnish

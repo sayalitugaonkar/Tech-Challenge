@@ -1,0 +1,28 @@
+---
+
+- name: Ensure group "clp" exists
+  ansible.builtin.group:
+    name: clp
+    state: present
+
+- name: Allow 'clp' group to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%clp'
+    line: '%clp ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+
+- name: Add the user 'test-ssh' with a specific uid and a primary group of 'clp'
+  ansible.builtin.user:
+    name: test-ssh
+    comment: test-ssh
+    group: clp
+
+- name: Add test-ssh users to clp group
+  user:
+    name=test-ssh
+    groups=clp
+    append=yes
+    state=present
+    createhome=yes

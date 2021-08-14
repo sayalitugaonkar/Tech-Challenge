@@ -1,0 +1,3 @@
+self_signed_certs:
+  - key: /etc/nginx/server.key
+    cert: /etc/nginx/server.crt

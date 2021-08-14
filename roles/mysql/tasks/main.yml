@@ -5,10 +5,9 @@
   get_url:
     url: "{{ my_package_url }}"
     dest: /usr/local/bin
-    remote_src: yes
+
 
 - name: Install GNUPG
-  become: true
   apt:
     name: gnupg
     state: present
@@ -17,34 +16,56 @@
   apt: 
    deb: "/usr/local/bin/mysql-apt-config_0.8.13-1_all.deb"
 
+- name: Run the equivalent of "apt-get update" as a separate step
+  apt:
+    update_cache: yes
+
 - name: Install server
-  become: true
   apt:
     name: mysql-server
     state: present
 
 - name: Install mysql client
-  become: true
   apt:
     name: mysql-client
+    state: present
+
+- name: Install pip
+  apt:
+    name: python-pip
     state: present
 
 - name: Make sure pymysql is present
   become: true # needed if the other tasks are not played as root
   pip:
-    name: pymysql
+    name: python-pymysql
     state: present
-
-
+  
 - name: start mysql
   systemd:
     name: mysql.service
     state: started
 
-
+  
 - name: copy my.cnf
   tags: server:settings
   template:
      src: my.cnf.j2
      dest: '/etc/mysql/my.cnf'
   notify: restart mysql
+
+
+- name: Create new database with names 'magento'
+  mysql_db:
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    name: magento 
+    state: present
+
+
+
+- name: Create database user with name 'bob'
+  community.mysql.mysql_user:
+    name: '{{ User1 }}'
+    password: '{{ User1_password }}'
+    priv: '*.*:ALL'
+    state: present
