@@ -1,34 +1,44 @@
 ---
 
+- name: debconf for pma
+  debconf: name=phpmyadmin question='phpmyadmin/dbconfig-install' value='true' vtype='boolean'
 
+- name: debconf for pma
+  debconf: name=phpmyadmin question='phpmyadmin/app-password-confirm' value='{{mysql_root_pass}}' vtype='password'
 
-- name: Create a directory if it does not exist
-  ansible.builtin.file:
-    path: /var/www/html/phpMyAdmin
-    state: directory
-    mode: '0755'
+- name: debconf for pma
+  debconf: name=phpmyadmin question='phpmyadmin/mysql/admin-pass' value='{{mysql_root_pass}}' vtype='password'
 
-- name: Unarchive a file that needs to be downloaded (added in 2.0)
-  ansible.builtin.unarchive:
-    src: https://files.phpmyadmin.net/phpMyAdmin/5.1.1/phpMyAdmin-5.1.1-all-languages.tar.gz
-    dest: /var/www/html/phpMyAdmin
-    remote_src: yes
+- name: debconf for pma
+  debconf: name=phpmyadmin question='phpmyadmin/mysql/app-pass' value='{{mysql_root_pass}}' vtype='password'
 
-- name: copy conf file
-  tags: server:settings
-  template:
-     src: inc.php.j2
-     dest: '/var/www/html/phpMyAdmin/config.inc.php'
+- name: debconf for pma
+  debconf: name=phpmyadmin question='phpmyadmin/reconfigure-webserver' value='' vtype='multiselect'
+
+- name: Install php-twig
+  ansible.builtin.shell: yes | aptitude -t buster-backports install php-twig
+  args:
+    executable: /bin/bash
+
+- name: install pma
+  apt: pkg=phpmyadmin state=present
+
+- name: configure site
+  file: path=/var/www/html/pub/phpmyadmin src=/usr/share/phpmyadmin state=link
+
 
 - name: Change file ownership 
   ansible.builtin.file:
-    path: /var/www/html/phpMyAdmin
+    path: /var/www/html/pub/phpmyadmin/
     state: directory
     owner: test-ssh
     group: clp
     recurse: yes
 
-- name: Change file permissions
+- name: Change file ownership to origin
   ansible.builtin.file:
-    path: /var/www/html/phpMyAdmin/config.inc.php
-    mode: '0660'
+    path: /usr/share/phpmyadmin/
+    state: directory
+    owner: test-ssh
+    group: clp
+    recurse: yes

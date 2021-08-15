@@ -1,14 +1,46 @@
 ---
 
-# - name: Composer install
-#   composer: 
-#     command: install 
-#     working_dir: /var/www/html/
-#   environment:
-#       COMPOSER_NO_INTERACTION: "1"
+- name: Delete existing magneto directory
+  file:
+    state: absent
+    path: /var/www/html/
+
+- name: Create magento directory
+  file:
+    path: /var/www/html
+    state: directory
+
+
+- name: Download maegnto
+  get_url:
+    url: https://github.com/magento/magento2/archive/refs/heads/2.4-develop.zip
+    dest: /var/www/magento.zip
+
+
+
+- name: Recursively change ownership for magento
+  ansible.builtin.file:
+    path: /var/www/html
+    state: directory
+    recurse: yes
+    owner: test-ssh
+    group: clp
+
+- name: Composer install
+  ansible.builtin.shell: "yes 'yes' | composer install --no-ansi --no-dev --no-interaction --no-scripts --optimize-autoloader"
+  args:
+    chdir: /var/www/html/
+    executable: /bin/bash
+    warn: false
+
+- name: maintenance_disable
+  ansible.builtin.shell: bin/magento maintenance:disable
+  args:
+    chdir: /var/www/html/
+    executable: /bin/bash
 
 - name: Activate setup install
-  ansible.builtin.shell: php bin/magento setup:install --enable-debug-logging=false --base-url=http://sulakhehospital.co.in/ --session-save=redis --session-save-redis-host=127.0.0.1 --session-save-redis-db=2 --cache-backend=redis --cache-backend-redis-db=0  --page-cache=redis --page-cache-redis-server=127.0.0.1 --page-cache-redis-db=1 --base-url-secure="https://sulakhehospital.co.in/" --use-secure=1 --use-secure-admin=1 --db-host=localhost --db-name=magento --db-user=magento-user --db-password=6x5UE8dp5337Yc --admin-firstname=Magento --admin-lastname=User --admin-email=user@example.com --admin-user=admin --admin-password=6x5UE8dp5337Yc --language=en_US --currency=USD --timezone=America/Chicago --use-rewrites=1 --search-engine=elasticsearch7 --elasticsearch-host=localhost --elasticsearch-port=9200
+  ansible.builtin.shell: php bin/magento setup:install --enable-debug-logging=false --base-url=http://sulakhehospital.co.in:8080/ --session-save=redis --session-save-redis-host=127.0.0.1 --session-save-redis-db=2 --cache-backend=redis --cache-backend-redis-db=0  --page-cache=redis --page-cache-redis-server=127.0.0.1 --page-cache-redis-db=1 --db-host=localhost --db-name=magento --db-user=magento-user --db-password=6x5UE8dp5337Yc --admin-firstname=Magento --admin-lastname=User --admin-email=user@example.com --admin-user=admin --admin-password=6x5UE8dp5337Yc --language=en_US --currency=USD --timezone=America/Chicago --use-rewrites=1 --search-engine=elasticsearch7 --elasticsearch-host=localhost --elasticsearch-port=9200
   args:
     chdir: /var/www/html/
     executable: /bin/bash
@@ -37,15 +69,8 @@
     chdir: /var/www/html/
     executable: /bin/bash
 
-
-# - name: sample data
-#   ansible.builtin.shell: php /var/www/html/bin/magento sampledata:deploy
-#   args:
-#     chdir: /var/www/html/
-#     executable: /bin/bash
-
 - name: static content
-  ansible.builtin.shell: php /var/www/html/bin/magento setup:static-content:deploy -f -language en_US
+  ansible.builtin.shell: php /var/www/html/bin/magento setup:static-content:deploy -f
   args:
     chdir: /var/www/html/
     executable: /bin/bash
@@ -77,6 +102,12 @@
     recurse: yes
     owner: test-ssh
     group: clp
+
+- name: Clean cache
+  ansible.builtin.shell: bin/magento cache:clean
+  args:
+    chdir: /var/www/html/
+    executable: /bin/bash
 
 - name: Reindex
   ansible.builtin.shell: bin/magento indexer:reindex

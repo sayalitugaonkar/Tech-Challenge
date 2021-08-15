@@ -4,6 +4,12 @@
     name: php7.4-fpm
     state: present
 
+- name: Remove file (delete file)
+  ansible.builtin.file:
+    path: /etc/php/7.4/fpm/pool.d/www.conf
+    state: absent
+
+
 - name: copy www.conf.j2
   tags: server:settings
   template:
@@ -11,9 +17,10 @@
      dest: '/etc/php/7.4/fpm/pool.d/magento-pool.conf'
   notify: restart php-fpm
 
-- name: Change file ownership of socket file 
+- name: Recursively change ownership for sample-data
   ansible.builtin.file:
-    path: /var/run/php/php7.4-fpm.sock
+    path: /var/run/php/
+    state: directory
+    recurse: yes
     owner: test-ssh
     group: clp
-  notify: restart php-fpm

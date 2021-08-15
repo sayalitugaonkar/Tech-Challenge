@@ -8,14 +8,8 @@ backend default {
     .host = "localhost";
     .port = "8080";
     .first_byte_timeout = 600s;
-    .probe = {
-        .url = "/pub/health_check.php";
-        .timeout = 2s;
-        .interval = 5s;
-        .window = 10;
-        .threshold = 5;
-   }
 }
+
 
 acl purge {
     "localhost";
@@ -209,10 +203,10 @@ sub vcl_deliver {
     unset resp.http.X-Magento-Debug;
     unset resp.http.X-Magento-Tags;
     unset resp.http.X-Powered-By;
-    unset resp.http.Server;
-    unset resp.http.X-Varnish;
-    unset resp.http.Via;
-    unset resp.http.Link;
+    #unset resp.http.Server;
+    #unset resp.http.X-Varnish;
+    #unset resp.http.Via;
+    #unset resp.http.Link;
 }
 
 sub vcl_hit {

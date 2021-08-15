@@ -5,18 +5,20 @@
     name: apache2
     state: absent     #process bound to the HTTP port 80.
 
-- name: Create self-signed certificate, if configured.
-  command: >
-    openssl req -x509 -nodes -subj '/CN=magento' -days 365
-    -newkey rsa:4096 -sha256 -keyout {{ item.key }} -out {{ item.cert }}
-    creates={{ item.cert }}
-  with_items: "{{ self_signed_certs }}"
-
 - name: Install nginx
   become: true
   apt:
     name: nginx
     state: present 
+
+- name: Remove existing cert
+  command: rm -rf /etc/nginx/server.crt
+
+- name: Remove existing key
+  command: rm -rf /etc/nginx/server.key
+
+- name: create self-signed SSL cert
+  command: openssl req -new -nodes -x509 -subj "/C=DE/ST=Berlin/L=Berlin/O=IT/CN=Ansible" -days 3650 -keyout /etc/nginx/server.key -out /etc/nginx/server.crt -extensions v3_ca creates=/etc/nginx/server.crt
 
 - name: copy default.j2
   tags: server:settings
@@ -30,4 +32,11 @@
   template:
      src: nginx.conf.j2
      dest: '/etc/nginx/nginx.conf'
+  notify: restart nginx
+
+- name: Change file ownership of socket file 
+  ansible.builtin.file:
+    path: /var/run/php/php7.4-fpm.sock
+    owner: test-ssh
+    group: clp
   notify: restart nginx

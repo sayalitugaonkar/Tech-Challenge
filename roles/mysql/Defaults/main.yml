@@ -10,7 +10,3 @@ server_bind_address: 0.0.0.0
 
 my_package_url: https://dev.mysql.com/get/mysql-apt-config_0.8.13-1_all.deb
 
-server_bind_address: 0.0.0.0
-
-User1: magento-user
-User1_password: 6x5UE8dp5337Yc

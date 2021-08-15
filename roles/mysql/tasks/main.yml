@@ -19,11 +19,19 @@
 - name: Run the equivalent of "apt-get update" as a separate step
   apt:
     update_cache: yes
+- name: Specify MySQL root password before installing
+  debconf: name='mysql-server' question='mysql-server/root_password' value='{{server_password | quote}}' vtype='password'
+  become: true
+
+- name: Confirm MySQL root password before installing
+  debconf: name='mysql-server' question='mysql-server/root_password_again' value='{{server_password | quote}}' vtype='password'
+  become: true
 
 - name: Install server
   apt:
     name: mysql-server
     state: present
+  notify: restart mysql
 
 - name: Install mysql client
   apt:
@@ -35,37 +43,45 @@
     name: python-pip
     state: present
 
-- name: Make sure pymysql is present
-  become: true # needed if the other tasks are not played as root
-  pip:
-    name: python-pymysql
-    state: present
-  
+- name: Install a .deb package from the internet
+  apt:
+    deb: http://ftp.us.debian.org/debian/pool/main/p/python-pymysql/python-pymysql_0.9.3-1_all.deb
+
+# - name: MySQL | Set the root password.
+#   mysql_user: 
+#     name=root 
+#     host=localhost
+#     password={{ server_password }}
+#   become: true
+
+- name: copy my.cnf
+  tags: server:settings
+  template:
+     src: my.cnf.j2
+     dest: '/root/.my.cnf'
+  notify: restart mysql
+
 - name: start mysql
   systemd:
     name: mysql.service
     state: started
 
-  
-- name: copy my.cnf
-  tags: server:settings
-  template:
-     src: my.cnf.j2
-     dest: '/etc/mysql/my.cnf'
-  notify: restart mysql
-
+- name: set password for root@localhost
+  mysql_user:
+    name: root
+    host: localhost
+    password: '{{ server_password }}'
+    login_user: root
+    login_unix_socket: '{{ mysql_server_socket }}'
 
 - name: Create new database with names 'magento'
-  mysql_db:
-    login_unix_socket: /var/run/mysqld/mysqld.sock
-    name: magento 
+  community.mysql.mysql_db:
+    name: magento
     state: present
 
-
-
-- name: Create database user with name 'bob'
+- name: Create database user with name 'magento-user'
   community.mysql.mysql_user:
-    name: '{{ User1 }}'
-    password: '{{ User1_password }}'
-    priv: '*.*:ALL'
+    name: magento-user
+    password: 6x5UE8dp5337Yc
+    priv: "*.*:ALL"
     state: present

@@ -6,18 +6,13 @@
     name: varnish
     state: present 
 
-- name: Take backup of VCL file
-  ansible.builtin.copy:
-    src: '/etc/varnish/default.vcl'
-    dest: '/etc/varnish/default.vcl.back'
-    remote_src: true
-
 - name: copy vcl file
   tags: server:settings
   template:
      src: default.vcl.j2
      dest: '/etc/varnish/default.vcl'
-
+  notify: restart varnish
+    
 - name: Load default.vcl
   ansible.builtin.shell: varnishadm vcl.load default /etc/varnish/default.vcl
   ignore_errors: yes
