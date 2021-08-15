@@ -65,7 +65,7 @@ server {
     ssl_certificate_key "{{ self_signed_certs.0.key }}";
     ssl_protocols  TLSv1.2 TLSv1.3;
     location / {
-       proxy_pass http://127.0.0.1:6081/;
+       proxy_pass http://127.0.0.1:6081;
        add_header Access-Control-Allow-Origin *;
        proxy_set_header Host               $http_host;
        proxy_set_header X-Forwarded-Host   $http_host;
@@ -86,7 +86,7 @@ server {
 }
 
 server {
-    listen 80 default_server;
+    listen 8080;
     server_name _;
     return 301 https://$host$request_uri;   
 }
