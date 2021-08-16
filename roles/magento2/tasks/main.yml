@@ -145,8 +145,8 @@
     chdir: /var/www/html/
     executable: /bin/bash
 
-- name: Cache images in background as they take a lot of time to generate
-  ansible.builtin.shell: bin/magento catalog:image:resize &
-  args:
-    chdir: /var/www/html/
-    executable: /bin/bash
+# - name: Cache images in background as they take a lot of time to generate
+#   ansible.builtin.shell: bin/magento catalog:image:resize &
+#   args:
+#     chdir: /var/www/html/
+#     executable: /bin/bash
