@@ -42,3 +42,8 @@
     owner: test-ssh
     group: clp
     recurse: yes
+
+- name: Change file ownership of sock file
+  ansible.builtin.file:
+    path: /var/run/php/php7.4-fpm.sock
+    mode: '0777'

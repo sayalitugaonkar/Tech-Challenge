@@ -30,7 +30,7 @@
     - elasticsearch
     - kibana
 
-- name: start elasticsearch
+- name: start elasticsearch service
   systemd:
     name: elasticsearch.service
-    state: started
+    state: restarted

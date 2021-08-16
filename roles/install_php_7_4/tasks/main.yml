@@ -4,7 +4,7 @@
   apt:
     update_cache: yes
 
-- name: Install a list of packages for PHP
+- name: Install a list of packages required for PHP 
   apt: 
     name: "{{item}}"
     state: present
@@ -25,7 +25,7 @@
     state: present
   become: true
 
-- name: install PHP
+- name: install version PHP7.4
   apt:
     name: php7.4
     state: present
@@ -81,4 +81,6 @@
 
 - name: Composer permissions
   file: dest=/usr/local/bin/composer mode=a+x
+
+
 

@@ -9,15 +9,15 @@
   #   tags: install-php-fpm
   # - role: mysql
   #   tags: install_mysql8_   
-  - role: nginx
-    tags: install_nginx
+  # - role: nginx
+  #   tags: install_nginx
   # - role: elasticsearch
   #   tags: install_elasticsearch 
   # - role: redis
   #   tags: install_redis 
-  # - role: magento2
-  #   tags: magento2 
-  - role: varnish
-    tags: install_varnish
+  - role: magento2
+    tags: magento2 
+  # - role: varnish
+  #   tags: install_varnish
   # - role: phpmyadmin
   #   tags: install_phpmyadmin 

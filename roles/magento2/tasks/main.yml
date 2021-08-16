@@ -10,13 +10,35 @@
     path: /var/www/html
     state: directory
 
+- name: Recursively change ownership for magento
+  ansible.builtin.file:
+    path: /var/www/html
+    state: directory
+    recurse: yes
+    owner: test-ssh
+    group: clp
+    mode: '0777'
 
-- name: Download maegnto
+- name: Download magento
   get_url:
     url: https://github.com/magento/magento2/archive/refs/heads/2.4-develop.zip
     dest: /var/www/magento.zip
 
+# You can also use the 'cmd' parameter instead of free form format.
+- name: change dir
+  ansible.builtin.shell:
+    cmd: unzip magento.zip -d /var/www/html
+    chdir: /var/www
 
+- name: copy contents to /var/www/html
+  ansible.builtin.shell:
+    cmd: cp -r magento2-2.4-develop/* .
+    chdir: /var/www/html
+
+- name: Remove old files 
+  file: 
+    path: /var/www/html/magento2-2.4-develop
+    state: absent
 
 - name: Recursively change ownership for magento
   ansible.builtin.file:
@@ -26,8 +48,15 @@
     owner: test-ssh
     group: clp
 
+
+- name: Composer download
+  ansible.builtin.shell: curl -sS https://getcomposer.org/installer |php
+
+- name: Composer path
+  ansible.builtin.shell: mv composer.phar /var/www/html/
+
 - name: Composer install
-  ansible.builtin.shell: "yes 'yes' | composer install --no-ansi --no-dev --no-interaction --no-scripts --optimize-autoloader"
+  ansible.builtin.shell: "yes 'yes' | composer install"
   args:
     chdir: /var/www/html/
     executable: /bin/bash
@@ -39,8 +68,9 @@
     chdir: /var/www/html/
     executable: /bin/bash
 
+
 - name: Activate setup install
-  ansible.builtin.shell: php bin/magento setup:install --enable-debug-logging=false --base-url=http://sulakhehospital.co.in:8080/ --session-save=redis --session-save-redis-host=127.0.0.1 --session-save-redis-db=2 --cache-backend=redis --cache-backend-redis-db=0  --page-cache=redis --page-cache-redis-server=127.0.0.1 --page-cache-redis-db=1 --db-host=localhost --db-name=magento --db-user=magento-user --db-password=6x5UE8dp5337Yc --admin-firstname=Magento --admin-lastname=User --admin-email=user@example.com --admin-user=admin --admin-password=6x5UE8dp5337Yc --language=en_US --currency=USD --timezone=America/Chicago --use-rewrites=1 --search-engine=elasticsearch7 --elasticsearch-host=localhost --elasticsearch-port=9200
+  ansible.builtin.shell: php bin/magento setup:install --base-url=http://sulakhehospital.co.in/ --session-save=redis --session-save-redis-host=127.0.0.1 --session-save-redis-db=2 --cache-backend=redis --cache-backend-redis-db=0  --page-cache=redis --page-cache-redis-server=127.0.0.1 --page-cache-redis-db=1 --base-url-secure="https://sulakhehospital.co.in/" --use-secure=1 --use-secure-admin=1 --db-host=localhost --db-name=magento --db-user=magento-user --db-password=6x5UE8dp5337Yc --admin-firstname=Magento --admin-lastname=User --admin-email=user@example.com --admin-user=admin --admin-password=6x5UE8dp5337Yc --language=en_US --currency=USD --timezone=America/Chicago --use-rewrites=1 --search-engine=elasticsearch7 --elasticsearch-host=localhost --elasticsearch-port=9200
   args:
     chdir: /var/www/html/
     executable: /bin/bash
@@ -81,7 +111,7 @@
     chdir: /var/www/html/
     executable: /bin/bash
 
-- name: maintenance_disable
+- name: cache_flush
   ansible.builtin.shell: bin/magento cache:flush
   args:
     chdir: /var/www/html/
@@ -111,6 +141,12 @@
 
 - name: Reindex
   ansible.builtin.shell: bin/magento indexer:reindex
+  args:
+    chdir: /var/www/html/
+    executable: /bin/bash
+
+- name: Cache images in background as they take a lot of time to generate
+  ansible.builtin.shell: bin/magento catalog:image:resize &
   args:
     chdir: /var/www/html/
     executable: /bin/bash
