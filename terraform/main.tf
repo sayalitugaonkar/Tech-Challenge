@@ -53,13 +53,12 @@ resource "aws_security_group" "allow_ssh" {
 resource "aws_instance" "ec2instance" {
   instance_type = "t3a.medium"
   ami = "${var.ami}" 
-  subnet_id = aws_subnet.prod-subnet-private-1.id
+  subnet_id = "subnet-fd7e1386"
   disable_api_termination = false
 
   ebs_optimized = false
-  key_name = "Bastion"
-  vpc_security_group_ids = [aws_security_group.allow_ssh.id,"${data.aws_security_group.default.id}"]
-  depends_on        = [aws_nat_gateway.example]
+  key_name = "Sayali_mac"
+  vpc_security_group_ids = [aws_security_group.allow_ssh.id]
   root_block_device {
     volume_size = "40"
   }
@@ -67,7 +66,5 @@ resource "aws_instance" "ec2instance" {
     "Name" = "Magento_Server"
   }
 }
-output "instance_private_ip" {
-  value = aws_instance.ec2instance.private_ip
-}
+
 
