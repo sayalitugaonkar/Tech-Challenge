@@ -4,20 +4,20 @@
   - role: users
     tags: create user "test-ssh"  # create user
   - role: install_php_7_4
-    tags: install_php_7_4         # php
+    tags: install,php,7.4         # php
   - role: php_fpm
-    tags: install-php-fpm         # php-fpm
+    tags: install,php-fpm         # php-fpm
   - role: mysql
-    tags: install_mysql8_         # mysql
+    tags: mysql, install         # mysql
   - role: nginx
-    tags: install_nginx           # nginx
+    tags: install, nginx           # nginx
   - role: elasticsearch   
-    tags: install_elasticsearch   # elasticsearch
+    tags: install, elasticsearch   # elasticsearch
   - role: redis
-    tags: install_redis           # redis
+    tags: install, redis           # redis
   - role: magento2
     tags: magento2                # magento2
   - role: varnish
-    tags: install_varnish         # varnish
+    tags: install, varnish         # varnish
   - role: phpmyadmin
-    tags: install_phpmyadmin      # phpmyadmin
+    tags: install, phpmyadmin      # phpmyadmin

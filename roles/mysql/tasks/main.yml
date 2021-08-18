@@ -75,13 +75,29 @@
     login_unix_socket: '{{ mysql_server_socket }}'
 
 - name: Create new database with names 'magento'
+  tags: "mysql::db"
   community.mysql.mysql_db:
     name: magento
     state: present
 
+- name: Create new database with names 'PhpMyAdmin'
+  tags: "mysql::db"
+  community.mysql.mysql_db:
+    name: phpmyadmin
+    state: present
+
 - name: Create database user with name 'magento-user'
+  tags: "mysql::user"
   community.mysql.mysql_user:
     name: magento-user
+    password: 6x5UE8dp5337Yc
+    priv: "*.*:ALL"
+    state: present
+
+- name: Create database user for 'phpmyadmin'
+  tags: "mysql::user"
+  community.mysql.mysql_user:
+    name: phpmyadmin
     password: 6x5UE8dp5337Yc
     priv: "*.*:ALL"
     state: present
