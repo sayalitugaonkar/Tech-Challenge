@@ -21,14 +21,13 @@
     executable: /bin/bash
     warn: false
 
-- name: install elasticsearch
-  apt:
-    name: elasticsearch
+- name: Install ElasticSearch server and Kibana for viewing data.
+  apt: 
+    name: "{{item}}"
     state: present
-    update_cache: true
-  loop:
-    - elasticsearch
-    - kibana
+  with_items:
+     - elasticsearch
+     - kibana
 
 - name: start elasticsearch service
   systemd:

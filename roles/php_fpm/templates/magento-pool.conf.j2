@@ -23,7 +23,7 @@ listen = /run/php/php7.4-fpm.sock
 ; Default Value: 511 (-1 on FreeBSD and OpenBSD)
 ;listen.backlog = 511
 pm = dynamic
-pm.max_children = 5
-pm.start_servers = 2
+pm.max_children = 5 
+pm.start_servers = 2  ; min_spare_servers + (max_spare_servers - min_spare_servers) / 2
 pm.min_spare_servers = 1
 pm.max_spare_servers = 3
