@@ -9,18 +9,9 @@
     path: /etc/php/7.4/fpm/pool.d/www.conf
     state: absent
 
-
-- name: copy www.conf.j2
+- name: copy magento-pool.conf.j2
   tags: server:settings
   template:
      src: magento-pool.conf.j2
      dest: '/etc/php/7.4/fpm/pool.d/magento-pool.conf'
   notify: restart php-fpm
-
-- name: Recursively change ownership for sample-data
-  ansible.builtin.file:
-    path: /var/run/php/
-    state: directory
-    recurse: yes
-    owner: test-ssh
-    group: clp

@@ -5,8 +5,7 @@ provider "aws" {
 
 
 resource "aws_security_group" "allow_ssh" {
-  name        = "allow_ssh"
-  description = "Allow ssh inbound traffic"
+  name        = "Linux_Security_Gp"
   vpc_id      = aws_vpc.main.id
 
   ingress {

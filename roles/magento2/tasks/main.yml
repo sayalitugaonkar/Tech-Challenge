@@ -10,15 +10,6 @@
     path: /var/www/html
     state: directory
 
-- name: Recursively change ownership for magento
-  ansible.builtin.file:
-    path: /var/www/html
-    state: directory
-    recurse: yes
-    owner: test-ssh
-    group: clp
-    mode: '0777'
-
 - name: Download magento
   get_url:
     url: https://github.com/magento/magento2/archive/refs/heads/2.4-develop.zip
@@ -39,15 +30,6 @@
   file: 
     path: /var/www/html/magento2-2.4-develop
     state: absent
-
-- name: Recursively change ownership for magento
-  ansible.builtin.file:
-    path: /var/www/html
-    state: directory
-    recurse: yes
-    owner: test-ssh
-    group: clp
-
 
 - name: Composer download
   ansible.builtin.shell: curl -sS https://getcomposer.org/installer |php
@@ -105,17 +87,30 @@
     chdir: /var/www/html/
     executable: /bin/bash
 
+- name: cache_flush
+  ansible.builtin.shell: bin/magento cache:flush
+  args:
+    chdir: /var/www/html/
+    executable: /bin/bash
+
+- name: Clean cache
+  ansible.builtin.shell: bin/magento cache:clean
+  args:
+    chdir: /var/www/html/
+    executable: /bin/bash
+
+- name: Reindex
+  ansible.builtin.shell: bin/magento indexer:reindex
+  args:
+    chdir: /var/www/html/
+    executable: /bin/bash
+
 - name: maintenance_disable
   ansible.builtin.shell: bin/magento maintenance:disable
   args:
     chdir: /var/www/html/
     executable: /bin/bash
 
-- name: cache_flush
-  ansible.builtin.shell: bin/magento cache:flush
-  args:
-    chdir: /var/www/html/
-    executable: /bin/bash
 
 - name: Recursively change ownership for magento
   ansible.builtin.file:
@@ -132,18 +127,6 @@
     recurse: yes
     owner: test-ssh
     group: clp
-
-- name: Clean cache
-  ansible.builtin.shell: bin/magento cache:clean
-  args:
-    chdir: /var/www/html/
-    executable: /bin/bash
-
-- name: Reindex
-  ansible.builtin.shell: bin/magento indexer:reindex
-  args:
-    chdir: /var/www/html/
-    executable: /bin/bash
 
 # - name: Cache images in background as they take a lot of time to generate
 #   ansible.builtin.shell: bin/magento catalog:image:resize &

@@ -6,7 +6,6 @@
     url: "{{ my_package_url }}"
     dest: /usr/local/bin
 
-
 - name: Install GNUPG
   apt:
     name: gnupg
@@ -46,13 +45,6 @@
 - name: Install a .deb package from the internet
   apt:
     deb: http://ftp.us.debian.org/debian/pool/main/p/python-pymysql/python-pymysql_0.9.3-1_all.deb
-
-# - name: MySQL | Set the root password.
-#   mysql_user: 
-#     name=root 
-#     host=localhost
-#     password={{ server_password }}
-#   become: true
 
 - name: copy my.cnf
   tags: server:settings

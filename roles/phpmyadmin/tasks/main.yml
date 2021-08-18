@@ -15,12 +15,12 @@
 - name: debconf for pma
   debconf: name=phpmyadmin question='phpmyadmin/reconfigure-webserver' value='' vtype='multiselect'
 
-- name: Install php-twig
+- name: Install php-twig, required dependency for phpMyAdmin
   ansible.builtin.shell: yes | aptitude -t buster-backports install php-twig
   args:
     executable: /bin/bash
 
-- name: install pma
+- name: install PhpMyAdmin
   apt: pkg=phpmyadmin state=present
 
 - name: configure site

@@ -17,30 +17,18 @@
   apt_key:
     url: https://packages.sury.org/php/apt.gpg
     state: present
-  become: true
 
 - name: install PHP deb repository
   apt_repository:
     repo: "deb https://packages.sury.org/php/ {{ ansible_distribution_release }} main"
     state: present
-  become: true
-
-- name: install version PHP7.4
-  apt:
-    name: php7.4
-    state: present
-    update_cache: true
-  loop:
-    - openjdk-8-jre-headless
-    - php7.4
-  become: true
 
 - name: Install a list of packages for PHP  #magento-2-php-extensions
   apt: 
     name: "{{item}}"
     state: present
   with_items:
-     - aptitude
+     - php7.4
      - php7.4-gd
      - php7.4-mcrypt
      - php7.4-curl
@@ -72,15 +60,17 @@
      - unzip
      - wget
      - git
+     - aptitude
+     - openjdk-8-jre-headless
 
-- name: Composer download
-  ansible.builtin.shell: curl -sS https://getcomposer.org/installer |php
+# - name: Composer download
+#   ansible.builtin.shell: curl -sS https://getcomposer.org/installer |php
 
-- name: Composer install
-  ansible.builtin.shell: mv composer.phar /usr/local/bin/composer
+# - name: Composer install
+#   ansible.builtin.shell: mv composer.phar /usr/local/bin/composer
 
-- name: Composer permissions
-  file: dest=/usr/local/bin/composer mode=a+x
+# - name: Composer permissions
+#   file: dest=/usr/local/bin/composer mode=a+x
 
 
 
