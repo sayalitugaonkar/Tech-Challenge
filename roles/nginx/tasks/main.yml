@@ -1,9 +1,9 @@
 ---
-- name: remove apache2 which is installed by default
-  become: true
-  apt:
-    name: apache2
-    state: absent     #process bound to the HTTP port 80.
+# - name: remove apache2 which is installed by default
+#   become: true
+#   apt:
+#     name: apache2
+#     state: absent
 
 - name: Install nginx
   become: true
@@ -36,7 +36,7 @@
 
 - name: Change file ownership of socket file 
   ansible.builtin.file:
-    path: /var/run/php/php7.4-fpm.sock
+    path: /var/run/php/php8.2-fpm.sock
     owner: test-ssh
     group: clp
   notify: restart nginx

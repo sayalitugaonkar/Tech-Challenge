@@ -1,0 +1,18 @@
+---
+
+- name: Install dependencies
+  apt: 
+    name: "{{item}}"
+    state: present
+  with_items:
+     - ruby-full
+     - wget
+
+- name: Download file from a file path
+  shell: wget https://aws-codedeploy-ap-south-1.s3.ap-south-1.amazonaws.com/latest/install -P /tmp/
+
+- name: Make it executable
+  shell: chmod +x /tmp/install
+
+- name: Install the file
+  shell: /tmp/install auto

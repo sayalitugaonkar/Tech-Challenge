@@ -12,6 +12,7 @@
      - apt-transport-https
      - ca-certificates
      - software-properties-common
+     - gpg
 
 - name: import the PHP apt key
   apt_key:
@@ -28,40 +29,38 @@
     name: "{{item}}"
     state: present
   with_items:
-     - php7.4
-     - php7.4-gd
-     - php7.4-mcrypt
-     - php7.4-curl
-     - php7.4-intl
-     - php7.4-xsl
-     - php7.4-mbstring
-     - php7.4-zip
-     - php7.4-soap
-     - php7.4-bcmath
-     - php7.4-ctype
-     - php7.4-dom
-     - php7.4-iconv
-     - php7.4-simplexml
-     - php7.4-sockets
-     - php7.4-cli
-     - php7.4-fpm
-     - php7.4-xml
-     - php7.4-redis
-     - php7.4-enchant
-     - php7.4-mysql
-     - php7.4-cgi
-     - php7.4-common
-     - php7.4-json
-     - php7.4-opcache
-     - php7.4-readline
-     - php7.4-memcached
-     - php7.4-bz2
+     - php8.2
+     - php8.2-gd
+     - php8.2-mcrypt
+     - php8.2-curl
+     - php8.2-intl
+     - php8.2-xsl
+     - php8.2-mbstring
+     - php8.2-zip
+     - php8.2-soap
+     - php8.2-bcmath
+     - php8.2-ctype
+     - php8.2-dom
+     - php8.2-iconv
+     - php8.2-simplexml
+     - php8.2-sockets
+     - php8.2-cli
+     - php8.2-fpm
+     - php8.2-xml
+     - php8.2-redis
+     - php8.2-enchant
+     - php8.2-mysql
+     - php8.2-cgi
+     - php8.2-common
+     - php8.2-opcache
+     - php8.2-readline
+     - php8.2-memcached
+     - php8.2-bz2
      - php-tcpdf   
      - unzip
      - wget
      - git
      - aptitude
-     - openjdk-8-jre-headless
 
 # - name: Composer download
 #   ansible.builtin.shell: curl -sS https://getcomposer.org/installer |php

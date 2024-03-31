@@ -1,4 +1,4 @@
 ---
 
-pool_user: test-user
+pool_user: test-ssh
 pool_group: clp

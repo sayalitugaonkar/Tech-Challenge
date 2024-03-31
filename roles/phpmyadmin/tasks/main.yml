@@ -45,5 +45,5 @@
 
 - name: Change file ownership of sock file
   ansible.builtin.file:
-    path: /var/run/php/php7.4-fpm.sock
+    path: /var/run/php/php8.2-fpm.sock
     mode: '0777'

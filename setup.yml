@@ -3,8 +3,8 @@
   roles:
   - role: users
     tags: create user "test-ssh"  # create user
-  - role: install_php_7_4
-    tags: install,php,7.4         # php
+  - role: install_php
+    tags: install,php,8.2         # php
   - role: php_fpm
     tags: install,php-fpm         # php-fpm
   - role: mysql
@@ -21,3 +21,5 @@
     tags: install, varnish         # varnish
   - role: phpmyadmin
     tags: install, phpmyadmin      # phpmyadmin
+  - role: codedeploy-agent
+    tags: codedeploy-agent, deploy-agent

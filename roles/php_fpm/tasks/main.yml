@@ -1,17 +1,17 @@
 ---
 - name: install php-fpm
   apt:
-    name: php7.4-fpm
+    name: php8.2-fpm
     state: present
 
 - name: Remove file (delete file)
   ansible.builtin.file:
-    path: /etc/php/7.4/fpm/pool.d/www.conf
+    path: /etc/php/8.2/fpm/pool.d/www.conf
     state: absent
 
 - name: copy magento-pool.conf.j2
   tags: server:settings
   template:
      src: magento-pool.conf.j2
-     dest: '/etc/php/7.4/fpm/pool.d/magento-pool.conf'
+     dest: '/etc/php/8.2/fpm/pool.d/magento-pool.conf'
   notify: restart php-fpm

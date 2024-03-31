@@ -1,5 +1,5 @@
 - name: restart php-fpm
   systemd:
-    name: php7.4-fpm.service
+    name: php8.2-fpm.service
     state: restarted
 
